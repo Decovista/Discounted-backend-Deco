@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -23,16 +24,37 @@ const spreadsheetId = process.env.SPREADSHEET_ID;
 const sheetName = "Sheet1";
 
 app.post("/api/contact", async (req, res) => {
-  const { name, phone, product,subProduct, city, best_time, message } = req.body;
+  const {
+    name = '',
+    phone = '',
+    product = '',
+    subProduct = '',
+    city = '',
+    best_time = '',
+    message = ''
+  } = req.body;
+
+  if (!name || !phone || !product) {
+    return res.status(400).json({ success: false, message: "Name, phone, and product are required." });
+  }
 
   try {
-    const values = [[name, phone, product,subProduct, city, best_time, message, new Date().toLocaleString('en-US', {timeZone: 'Asia/kolkata'})]];
+    const values = [[
+      name,
+      phone,
+      product,
+      subProduct,
+      city,
+      best_time,
+      message,
+      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+    ]];
 
     await sheets.spreadsheets.values.append({
       spreadsheetId,
       range: `${sheetName}!A1`,
       valueInputOption: "USER_ENTERED",
-      resource: { values },
+      resource: { values }
     });
 
     res.status(200).json({ success: true, message: "Form submitted to Google Sheet." });
@@ -43,5 +65,5 @@ app.post("/api/contact", async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
