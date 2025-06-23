@@ -5,7 +5,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -25,28 +25,24 @@ const sheetName = "Sheet1";
 
 app.post("/api/contact", async (req, res) => {
   const {
-    name = '',
-    phone = '',
-    product = '',
-    subProduct = '',
-    city = '',
-    best_time = '',
-    message = ''
+    name = "",
+    email = "",
+    phone = "",
+    whatsapp = false,
+    propertyName = "",
   } = req.body;
 
-  if (!name || !phone || !product) {
-    return res.status(400).json({ success: false, message: "Name, phone, and product are required." });
+  if (!name || !phone || !propertyName) {
+    return res.status(400).json({ success: false, message: "Name, phone, and property name are required." });
   }
 
   try {
     const values = [[
       name,
       phone,
-      product,
-      subProduct,
-      city,
-      best_time,
-      message,
+      email,
+      whatsapp ? "Yes" : "No",
+      propertyName,
       new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
     ]];
 
